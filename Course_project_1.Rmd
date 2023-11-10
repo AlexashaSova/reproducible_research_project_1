@@ -1,0 +1,86 @@
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
+
+## 1. Loading and preprocessing the data
+
+We need to unzip data first:
+
+```{r echo=TRUE}
+unzip('./activity.zip')
+df_activity <- read.csv('./activity.csv')
+```
+
+Let's take a look on the obtained data.
+
+Let's look on the top items, items' datatypes and summary on the data:
+
+```{r echo=TRUE}
+head(df_activity)
+```
+
+```{r echo=TRUE}
+str(df_activity)
+```
+
+```{r echo=TRUE}
+summary(df_activity)
+```
+
+Column **`steps`** has NA values.
+
+The datatypes seem to be allright.
+
+## 2. What is mean total number of steps taken per day?
+
+The first step is calculating the total number of steps taken per day. For this, we do the following steps:
+
+Create data frame with the number of steps corresponding each date:
+
+```{r echo=TRUE}
+num_steps_per_day <- data.frame(aggregate(steps ~ date,
+                                df_activity,
+                                sum, 
+                                # omit rows with missing values
+                                na.rm = TRUE))
+```
+
+Check the obtained data frame:
+
+```{r echo=TRUE}
+head(num_steps_per_day)
+```
+
+Creating histogram on the total number of steps taken each day:
+
+```{r echo=TRUE}
+
+hist(num_steps_per_day$steps,
+     main = "Total number of steps taken each day",
+     xlab = "Steps",
+     ylab = "Value",
+     col = "deepskyblue3")
+```
+
+Calculating the mean of the total steps taken per day:
+
+```{r echo=TRUE}
+steps_per_day_mean <- mean(num_steps_per_day$steps)
+steps_per_day_mean
+```
+
+Calculating the median of the total steps taken per day:
+
+```{r echo=TRUE}
+steps_per_day_median <- median(num_steps_per_day$steps)
+steps_per_day_median
+```
+
+## 3. What is the average daily activity pattern?
+
+## 4. Imputing missing values
+
+## 5. Are there differences in activity patterns between weekdays and weekends?

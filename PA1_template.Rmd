@@ -45,7 +45,7 @@ num_steps_per_day <- data.frame(aggregate(steps ~ date,
                                 df_activity,
                                 sum, 
                                 # omit rows with missing values
-                                na.rm = TRUE))
+                                na.rm = T))
 ```
 
 Check the obtained data frame:
@@ -80,6 +80,36 @@ steps_per_day_median
 ```
 
 ## 3. What is the average daily activity pattern?
+
+We have to make a time series plot of 5-minute interval and then take average number of steps taken averaged across all days:
+
+```{r}
+steps_per_5_min <- aggregate(steps ~ interval,
+                             data = df_activity,
+                             mean,
+                             # omit rows with missing values
+                             na.rm = T)
+```
+
+Plotting obtained time series:
+
+```{r}
+plot(steps ~ interval,
+     data = steps_per_5_min,
+     type = "l",
+     main = "Average daily activity pattern, steps per day",
+     xlab = "Days",
+     ylab = "Averaged number of steps")
+```
+
+Finding the 5-min interval, that contains the maximum number of steps:
+
+```{r}
+steps_per_5_min_max <- steps_per_5_min[which.max(steps_per_5_min$steps),]$interval
+steps_per_5_min_max
+```
+
+This 5 min interval (835) contains the maximum number of steps across the averaged intervals.
 
 ## 4. Imputing missing values
 

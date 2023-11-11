@@ -189,6 +189,62 @@ As we can deduce from the obtained results after filling NAs as a mean values of
 
 To have this task done, regards the fact the date is given as a `chr` datatype, we need to convert it to the right datatype first:
 
-```{r}
+```{r echo=TRUE}
+df_activity_no_na$date <- as.POSIXct(df_activity_no_na$date, 
+                                     "%Y-%m-%d")
+```
 
+Checking if the data datype on the `date` columns is `POSIXct`. The column type is right:
+
+```{r echo=TRUE}
+str(df_activity_no_na)
+```
+
+To define if the selected date is weekday or weekend, we'll use `weekend()` function. The result of this is written to a new column `weekday`, the values Weekday or Weekend respectively to the day type the current date belongs to:
+
+```{r echo=TRUE}
+df_activity_no_na$weekday <- sapply(df_activity_no_na$date,
+        function(x){
+                        if(weekdays(x)=="Saturday"|weekdays(x)=="Sunday") {
+        day <- "Weekend"
+} else {
+        day <- "Weekday"
+}
+                                    } )
+```
+
+Check, if the column created on the previous step is right. It's right and contains values Weekday or Weekend:
+
+```{r echo=TRUE}
+head(df_activity_no_na)
+```
+
+In order to make a plot, we have to aggregate values of the steps per interval, respecting to the factor of if the day is weekend or weekday (data from the column `weekday`) :
+
+```{r echo=TRUE}
+steps_by_day_of_week <- aggregate(steps ~ interval + weekday,
+                                  df_activity_no_na,
+                                  mean)
+```
+
+Creating a plot using `ggplot2` library in order to make the visualization more flexible.
+
+From the obtained visualization we can deduce that average steps activity on the weekends is a little bit higher than on the weekdays.
+
+```{r echo=TRUE}
+library(ggplot2)
+base_plot <- ggplot(steps_by_day_of_week, 
+                    aes(x = interval, 
+                        y = steps, 
+                        color = weekday)) 
+weekday_weekend_activity_plot <-  base_plot + 
+                                  geom_line() + 
+                                  ggtitle("Steps activity pattern for weekdays and weekends") + 
+                                   xlab("Interval") + 
+                                   ylab("AVG number of steps") +
+        # creating panels
+                                   facet_wrap(~weekday, ncol = 1, nrow = 2) +
+                                   scale_color_discrete(name = "Day of the week")
+
+print(weekday_weekend_activity_plot)
 ```
